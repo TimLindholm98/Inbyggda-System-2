@@ -1,10 +1,11 @@
 #include <avr/io.h>
 #include "led.h"
-#include "colors.h"
 
 void LED_init() {
 	// ...
-  DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
+  //DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
+  DDRD |= (1 << DDD6);
+
 }
 
 void toogle_LED(enum COLORS color){

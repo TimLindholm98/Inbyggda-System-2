@@ -3,8 +3,7 @@
 #include "timer.h"
 
 void timer_init() {
-  OCR0A = 156; //COMPARE_MATCH_REGISTER
-  TIMSK0 = (1 << OCIE0A);
-  TCCR0A |= (1 << WGM01); // enable ctc mode
-  TCCR0B |= (1 << CS02) | (1 << CS00);  //Set prescaler
+  TIMSK0 |= (1 << OCIE0A); // sätter på interrupts för  TIMER0_COMPA
+  TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);
+  TCCR0B |= (1 << CS00) | (1 << CS01) /*| (1 << WGM02)*/;  //Set prescaler
 }
