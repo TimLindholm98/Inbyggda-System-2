@@ -10,19 +10,19 @@
 #include "serial.h"
 #include "timer.h"
 
-
+static volatile int indexing = 0;
 static volatile int pwm_value = 0;
 static volatile bool ramp_up = true;
 
 void main(void){
 	//printf_P(PSTR("Hello there\n"));
-	uart_init();
+	//uart_init();
 	timer_init();
 	LED_init();
 	//sei();
 	while(1){
 		if(ramp_up){
-			if(pwm_value == 254){
+			if(pwm_value >= 254){
 				ramp_up = false;
 			}
 			pwm_value++;
@@ -38,15 +38,15 @@ void main(void){
 	}
 }
 
-ISR(TIMER0_COMPA_vect){			//Ramping LED
+ISR(TIMER0_COMPA_vect){			//Ramping LED uncomment sei(); for interrupts
 	if(ramp_up){
-		if(pwm_value == 255){
+		if(pwm_value >= 255){
 			ramp_up = false;
 		}
 		pwm_value++;
 	}
 	else{
-		if(pwm_value == 0){
+		if(pwm_value <= 0){
 			ramp_up = true;
 		}
 		pwm_value--;

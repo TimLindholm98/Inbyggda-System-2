@@ -11,4 +11,3 @@ int uart_putchar(char chr, FILE *stream);
 char uart_getchar(void);
 
 #endif
-
