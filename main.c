@@ -21,20 +21,11 @@ void main(void){
 	LED_init();
 	//sei();
 	while(1){
-		if(ramp_up){
-			if(pwm_value >= 254){
-				ramp_up = false;
-			}
-			pwm_value++;
+		
+		if(TIFR2 & (1<<OCF2A)){
+			OCR0A = simple_ramp();
+			TIFR2 |= ~(1<<OCF2A);
 		}
-		else{
-			if(pwm_value <= 5){
-				ramp_up = true;
-			}
-			pwm_value--;
-		}
-		_delay_ms(10);
-		OCR0A = pwm_value;
 	}
 }
 
