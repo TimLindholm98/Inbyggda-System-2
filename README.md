@@ -54,7 +54,8 @@ Svar: Kopplade in en LED till pinne 6 och till GND
  * Fast PWM-mod, 0xFF som TOP, Non-inverting mode.
  * Prescaler = 64. Ange i git-commiten vilken PWM-frekvens det resulterar i samt beräkningen du använde.
  
- Svar: PWM_fequency = clock_speed / (Prescaller_value * (1 + TOP_Value))
+ Svar: PWM_fequency = clock_speed / (Prescaller_value * (1 + TOP_Value))\
+ PWM_fequency = 16000000 / (64 * (1 + 255)) = 976.5625
  ```C
  void timer_init() {
   TIMSK0 |= (1 << OCIE0A); // sätter på interrupts för  TIMER0_COMPA
@@ -76,16 +77,16 @@ void main(void){
 	//sei();
 	while(1){
 		if(ramp_up){
+			pwm_value++;
 			if(pwm_value == 254){
 				ramp_up = false;
-			}
-			pwm_value++;
+			}	
 		}
 		else{
-			if(pwm_value <= 5){
-				ramp_up = true;
-			}
 			pwm_value--;
+			if(pwm_value <= 0){
+				ramp_up = true;
+			}		
 		}
 		_delay_ms(10);
 		OCR0A = pwm_value;
@@ -94,19 +95,68 @@ void main(void){
 
 ISR(TIMER0_COMPA_vect){			//Ramping with interupts uncomment sei();
 	if(ramp_up){
+		pwm_value++;
 		if(pwm_value >= 255){
 			ramp_up = false;
 		}
-		pwm_value++;
 	}
 	else{
+		pwm_value--;
 		if(pwm_value <= 0){
 			ramp_up = true;
 		}
-		pwm_value--;
 	}
 	OCR0A = pwm_value;
 }
 
 ```
+
+## Deluppgift 3 (VG-krav): led-rampning
+#### 1. Konfigurera timer0 som Fast PWM enligt ovan, och timer2 som enkel timer i CTC-mod, periodtid 16 ms.
+````C
+void timer_init() {
+  TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);    // Fast PWM-mode, non-inverting
+  TCCR0B |= (1 << CS00) | (1 << CS01);  //Set prescaler
+
+  OCR2A = 249;
+  TCCR2A |= (1 << WGM21); // enable ctc mode
+  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);  //Set prescaler
+
+}
+````
+#### 3. Deklarera och implementera en funktion uint8_t simple_ramp() som vid varje anrop returnerar ett värde mellan 0–255. Värdet ska börja på 0, och för varje anrop inkrementeras, tills det når 255. Därefter ska det dekrementeras ner till 0, varpå cykeln börjar om.
+````C
+uint8_t simple_ramp(){
+  static bool ramp_up = true;
+  static int pwm_value = 0;
+
+  if(ramp_up){
+    pwm_value++;
+    if(pwm_value >= 255){
+			ramp_up = false;
+		}
+	}
+	else{
+    pwm_value--;
+		if(pwm_value <= 0){
+			ramp_up = true;
+		}
+	}
+  return pwm_value;
+}
+````
+#### 4. Anropa funktionen periodiskt med hjälp av timer2 och använd returvärdet som duty cycle för LEDens PWM-styrning. Förväntat beteende är att LEDen synligt pulserar av och på.
+````C
+void main(void){
+	timer_init();
+	LED_init();
+	while(1){
+		
+		if(TIFR2 & (1<<OCF2A)){
+			OCR0A = simple_ramp();
+			TIFR2 |= ~(1<<OCF2A);
+		}
+	}
+}
+````
 
