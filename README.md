@@ -174,15 +174,15 @@ uint8_t simple_ramp(){
 #### 4. Anropa funktionen periodiskt med hjälp av timer2 och använd returvärdet som duty cycle för LEDens PWM-styrning. Förväntat beteende är att LEDen synligt pulserar av och på.
 ````C
 void main(void){
-
-    timer_init();
-    LED_init();
-    while(1){	
-    if(TIFR2 & (1<<OCF2A)){
-      OCR0A = simple_ramp();
-      TIFR2 |= ~(1<<OCF2A);
-    }
-  }
+	timer_init();
+	LED_init();
+	//sei();
+	while(1){
+		if(TIFR2 & (1<<OCF2A)){
+			OCR0A = simple_ramp();
+			TIFR2 |= ~(1<<OCF2A);
+		}
+	}
 }
 ````
 
