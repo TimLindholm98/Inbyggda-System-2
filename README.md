@@ -6,7 +6,7 @@
 Svar: Jag har använt arduino skölden 
 ```C
 void LED_init() {
-  DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
+	DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
 }
 ```
 
@@ -15,9 +15,9 @@ Svar: 16000000/(1024 * 100) = 156,25 \
       156 - 1 = 155 (noll indexerat).
 ```C
 void timer_init() {
-  OCR0A = 155;
-  TCCR0A |= (1 << WGM01); // enable ctc mode
-  TCCR0B |= (1 << CS02) | (1 << CS00);  //Set prescaler
+	OCR0A = 155;
+	TCCR0A |= (1 << WGM01); // enable ctc mode
+  	TCCR0B |= (1 << CS02) | (1 << CS00);  //Set prescaler
 }
 ```
 
@@ -29,26 +29,26 @@ void timer_init() {
 //---------- led.c ----------
 
 void toggle_LED(enum COLORS color){
-  switch(color){
-    case RED:
-      PORTB ^= (1 << PB3);
-      break;
-    case BLUE:
-      PORTB ^= (1 << PB2);
-      break;
-    case GREEN:
-      PORTB ^= (1 << PB1);
-      break;
-    case MAGENTA:
-      PORTB ^= (1 << PB3) | (1 << PB2);
-      break;
-    case CYAN:
-      PORTB ^= (1 << PB2) | (1 << PB1);
-      break;
-    case YELLOW:
-      PORTB ^= (1 << PB1)| (1 << PB3);
-      break;
-  }
+	switch(color){
+		case RED:
+      			PORTB ^= (1 << PB3);
+     			break;
+    		case BLUE:
+      			PORTB ^= (1 << PB2);
+      			break;
+    		case GREEN:
+      			PORTB ^= (1 << PB1);
+      			break;
+    		case MAGENTA:
+      			PORTB ^= (1 << PB3) | (1 << PB2);
+      			break;
+    		case CYAN:
+      			PORTB ^= (1 << PB2) | (1 << PB1);
+      			break;
+    		case YELLOW:
+      			PORTB ^= (1 << PB1)| (1 << PB3);
+      			break;
+	}
 }
 
 //---------- main.c ----------
@@ -56,19 +56,19 @@ void toggle_LED(enum COLORS color){
 static volatile int indexing = 0;
 
 void main(void){
-  timer_init();
-  LED_init();
-
-  while(1){
-    if(TIFR0 & (1<<OCF0A)){
-      indexing++;
-      TIFR0 |= ~(1 << OCF0A);
-    }
-    if(indexing == 10){
-      toggle_LED(MAGENTA);
-      indexing = 0;
-    }
-  }
+	timer_init();
+	LED_init();
+	
+	while(1){
+		if(TIFR0 & (1<<OCF0A)){
+      			indexing++;
+	      		TIFR0 |= ~(1 << OCF0A);
+    		}
+    		if(indexing == 10){
+      			toggle_LED(MAGENTA);
+      			indexing = 0;
+    		}	
+  	}
 }
 ```
 
@@ -84,10 +84,10 @@ Svar: Kopplade in en LED till pinne 6 och till GND
  Svar: PWM_fequency = clock_speed / (Prescaller_value * (1 + TOP_Value))\
  PWM_fequency = 16000000 / (64 * (1 + 255)) = 976.5625
  ```C
- void timer_init() {
-  TIMSK0 |= (1 << OCIE0A); // sätter på interrupts för  TIMER0_COMPA
-  TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);
-  TCCR0B |= (1 << CS00) | (1 << CS01);  //Set prescaler
+void timer_init() {
+	TIMSK0 |= (1 << OCIE0A); // sätter på interrupts för  TIMER0_COMPA
+  	TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);
+  	TCCR0B |= (1 << CS00) | (1 << CS01);  //Set prescaler
 }
 
  ```
@@ -96,44 +96,45 @@ Svar: Kopplade in en LED till pinne 6 och till GND
 ```C
 static volatile int pwm_value = 0;
 static volatile bool ramp_up = true;
-
 void main(void){
-  timer_init();
-  LED_init();
-  //sei();
-  while(1){
-    if(ramp_up){
-      pwm_value++;
-      if(pwm_value == 255){
-        ramp_up = false;
-      }	
-    }
-    else{
-      pwm_value--;
+	timer_init();
+	LED_init();
+	//sei();
+	while(1){
+		if(ramp_up){
+			pwm_value++;
+			if(pwm_value == 255){
+				ramp_up = false;
+			}
+		}		
+		else{
+			pwm_value--;
       if(pwm_value <= 0){
-        ramp_up = true;
-      }		
-    }
-    _delay_ms(10);
-    OCR0A = pwm_value;
-  }
+				ramp_up = true;
+			}		
+		}
+		_delay_ms(10);
+		OCR0A = pwm_value;
+	}
 }
 
-ISR(TIMER0_COMPA_vect){			//Ramping with interupts uncomment sei();
-  if(ramp_up){
-    pwm_value++;
-    if(pwm_value >= 255){
-      ramp_up = false;
-    }
-  }
-  else{
-    pwm_value--;
-    if(pwm_value <= 0){
-      ramp_up = true;
-    }
-  }
-  OCR0A = pwm_value;
+
+ISR(TIMER0_COMPA_vect){			//Ramping LED uncomment sei(); for interrupts
+	if(ramp_up){
+		pwm_value++;
+		if(pwm_value >= 255){
+			ramp_up = false;
+		}
+	}
+	else{
+		pwm_value--;
+		if(pwm_value <= 0){
+			ramp_up = true;
+		}
+	}
+	OCR0A = pwm_value;
 }
+
 
 ```
 
@@ -141,13 +142,12 @@ ISR(TIMER0_COMPA_vect){			//Ramping with interupts uncomment sei();
 #### 1. Konfigurera timer0 som Fast PWM enligt ovan, och timer2 som enkel timer i CTC-mod, periodtid 16 ms.
 ````C
 void timer_init() {
-  TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);    // Fast PWM-mode, non-inverting
-  TCCR0B |= (1 << CS00) | (1 << CS01);  //Set prescaler
-
-  OCR2A = 249;
-  TCCR2A |= (1 << WGM21); // enable ctc mode
-  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);  //Set prescaler
-
+	TCCR0A |= (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);    // Fast PWM-mode
+	TCCR0B |= (1 << CS00) | (1 << CS01);  //Set prescaler
+	
+	OCR2A = 249; 
+	TCCR2A |= (1 << WGM21); // enable ctc mode
+	TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);  //Set prescaler
 }
 ````
 #### 3. Deklarera och implementera en funktion uint8_t simple_ramp() som vid varje anrop returnerar ett värde mellan 0–255. Värdet ska börja på 0, och för varje anrop inkrementeras, tills det når 255. Därefter ska det dekrementeras ner till 0, varpå cykeln börjar om.
