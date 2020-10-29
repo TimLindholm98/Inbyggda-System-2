@@ -1,7 +1,8 @@
 # Inbyggda-System-2 #
 
 ## Rättnings hjälp
-**Uträckningar och förklaringar** har jag lagt i readme filen, och jag rekomenderar att ni kollar på webben.
+**Uträckningar och förklaringar** har jag lagt i readme filen, och jag rekomenderar att ni kollar på webben. [länk till min github repo](https://github.com/TimLindholm98/Inbyggda-System-2/blob/main/README.md)
+
 
 **Commits:** Jag har kommit på bättre lösningar under gången av arbetet så gjorde 3 commits som ni kan testa.\\
 
