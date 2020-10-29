@@ -6,7 +6,7 @@
 Svar: Jag har använt arduino skölden 
 ```C
 void LED_init() {
-	DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
+  DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
 }
 ```
 
@@ -56,19 +56,19 @@ void toggle_LED(enum COLORS color){
 static volatile int indexing = 0;
 
 void main(void){
-	timer_init();
-	LED_init();
+  timer_init();
+  LED_init();
 
-	while(1){
-		if(TIFR0 & (1<<OCF0A)){
-			indexing++;
-			TIFR0 |= ~(1 << OCF0A);
-		}
-		if(indexing == 10){
-			toggle_LED(MAGENTA);
-			indexing = 0;
-		}
-	}
+  while(1){
+    if(TIFR0 & (1<<OCF0A)){
+      indexing++;
+      TIFR0 |= ~(1 << OCF0A);
+    }
+    if(indexing == 10){
+      toggle_LED(MAGENTA);
+      indexing = 0;
+    }
+  }
 }
 ```
 
@@ -98,42 +98,41 @@ static volatile int pwm_value = 0;
 static volatile bool ramp_up = true;
 
 void main(void){
-
-	timer_init();
-	LED_init();
-	//sei();
-	while(1){
-		if(ramp_up){
-			pwm_value++;
-			if(pwm_value == 255){
-				ramp_up = false;
-			}	
-		}
-		else{
-			pwm_value--;
-			if(pwm_value <= 0){
-				ramp_up = true;
-			}		
-		}
-		_delay_ms(10);
-		OCR0A = pwm_value;
-	}
+  timer_init();
+  LED_init();
+  //sei();
+  while(1){
+    if(ramp_up){
+      pwm_value++;
+      if(pwm_value == 255){
+        ramp_up = false;
+      }	
+    }
+    else{
+      pwm_value--;
+      if(pwm_value <= 0){
+        ramp_up = true;
+      }		
+    }
+    _delay_ms(10);
+    OCR0A = pwm_value;
+  }
 }
 
 ISR(TIMER0_COMPA_vect){			//Ramping with interupts uncomment sei();
-	if(ramp_up){
-		pwm_value++;
-		if(pwm_value >= 255){
-			ramp_up = false;
-		}
-	}
-	else{
-		pwm_value--;
-		if(pwm_value <= 0){
-			ramp_up = true;
-		}
-	}
-	OCR0A = pwm_value;
+  if(ramp_up){
+    pwm_value++;
+    if(pwm_value >= 255){
+      ramp_up = false;
+    }
+  }
+  else{
+    pwm_value--;
+    if(pwm_value <= 0){
+      ramp_up = true;
+    }
+  }
+  OCR0A = pwm_value;
 }
 
 ```
