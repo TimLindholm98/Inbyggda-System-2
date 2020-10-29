@@ -1,5 +1,14 @@
 # Inbyggda-System-2 #
 
+## Rättnings hjälp
+**Uträckningar och förklaringar** har jag lagt i readme filen, och jag rekomenderar att ni kollar på webben.
+
+**Commits:** Jag har kommit på bättre lösningar under gången av arbetet så gjorde 3 commits som ni kan testa.\\
+
+ * DONE - Deluppgift 1: Blinka LED
+ * DONE - Deluppgift 2: VERIERA LJUSSTYRKAN MED PWN
+ * DONE - Deluppgift 3 (VG-krav): led-rampning
+
 ## Deluppgift 1: Blinka LED ##
 
 #### 1. Koppla in LED och lämplig resistor till pinne 8 på Arduinons expansionsport med hjälp av kopplingsdäck och kablar. Minns från labb 1 att det motvarar PORTB0, och konfigurera upp den som utgång (alternativt valfri led på din egentillverkade, handgjorda, lokalproducerade sköld).
