@@ -3,10 +3,10 @@
 ## Deluppgift 1: Blinka LED ##
 
 #### 1. Koppla in LED och lämplig resistor till pinne 8 på Arduinons expansionsport med hjälp av kopplingsdäck och kablar. Minns från labb 1 att det motvarar PORTB0, och konfigurera upp den som utgång (alternativt valfri led på din egentillverkade, handgjorda, lokalproducerade sköld).
-Svar: Jag använder arduino skölden.
+Svar: Jag har använt arduino skölden 
 ```C
 void LED_init() {
-  DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
+	DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
 }
 ```
 
@@ -26,6 +26,33 @@ void timer_init() {
  * Inkrementera en räknarvariabel, och när denna når 10; nollställ den och toggla LEDen. Detta för att förenkla, ögat ser inte blinkningarna i 100 Hz, så vi delar ner frekvensen till 10 Hz. Skriv och testa gärna den här delen innan du kopplar in timer-koden.
 
 ```C
+//---------- led.c ----------
+
+void toggle_LED(enum COLORS color){
+  switch(color){
+    case RED:
+      PORTB ^= (1 << PB3);
+      break;
+    case BLUE:
+      PORTB ^= (1 << PB2);
+      break;
+    case GREEN:
+      PORTB ^= (1 << PB1);
+      break;
+    case MAGENTA:
+      PORTB ^= (1 << PB3) | (1 << PB2);
+      break;
+    case CYAN:
+      PORTB ^= (1 << PB2) | (1 << PB1);
+      break;
+    case YELLOW:
+      PORTB ^= (1 << PB1)| (1 << PB3);
+      break;
+  }
+}
+
+//---------- main.c ----------
+
 static volatile int indexing = 0;
 
 void main(void){
@@ -38,7 +65,7 @@ void main(void){
 			TIFR0 |= ~(1 << OCF0A);
 		}
 		if(indexing == 10){
-			toggle_LED(RED);
+			toggle_LED(MAGENTA);
 			indexing = 0;
 		}
 	}
@@ -131,8 +158,8 @@ uint8_t simple_ramp(){
   	static int pwm_value = 0;
 
   	if(ramp_up){
-    		pwm_value++;
-    		if(pwm_value >= 255){
+    	pwm_value++;
+    	if(pwm_value >= 255){
 			ramp_up = false;
 		}
 	}
