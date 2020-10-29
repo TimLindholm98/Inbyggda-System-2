@@ -153,36 +153,36 @@ void timer_init() {
 #### 3. Deklarera och implementera en funktion uint8_t simple_ramp() som vid varje anrop returnerar ett värde mellan 0–255. Värdet ska börja på 0, och för varje anrop inkrementeras, tills det når 255. Därefter ska det dekrementeras ner till 0, varpå cykeln börjar om.
 ````C
 uint8_t simple_ramp(){
-	static bool ramp_up = true;
-  	static int pwm_value = 0;
-
-  	if(ramp_up){
-    		pwm_value++;
-    		if(pwm_value >= 255){
-			ramp_up = false;
-		}
-	}
-   	else{
-    		pwm_value--;
-		if(pwm_value <= 0){
-			ramp_up = true;
-		}
-	}
-  	return pwm_value;
+  static bool ramp_up = true;
+  static int pwm_value = 0;
+  
+  if(ramp_up){
+    pwm_value++;
+    if(pwm_value >= 255){
+      ramp_up = false;
+    }
+  }
+  else{
+    pwm_value--;
+    if(pwm_value <= 0){
+      ramp_up = true;
+    }
+  }
+  return pwm_value;
 }
 ````
 #### 4. Anropa funktionen periodiskt med hjälp av timer2 och använd returvärdet som duty cycle för LEDens PWM-styrning. Förväntat beteende är att LEDen synligt pulserar av och på.
 ````C
 void main(void){
-	timer_init();
-	LED_init();
-	while(1){
-		
-		if(TIFR2 & (1<<OCF2A)){
-			OCR0A = simple_ramp();
-			TIFR2 |= ~(1<<OCF2A);
-		}
-	}
+
+    timer_init();
+    LED_init();
+    while(1){	
+    if(TIFR2 & (1<<OCF2A)){
+      OCR0A = simple_ramp();
+      TIFR2 |= ~(1<<OCF2A);
+    }
+  }
 }
 ````
 
