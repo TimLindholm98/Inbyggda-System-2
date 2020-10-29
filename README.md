@@ -158,8 +158,8 @@ uint8_t simple_ramp(){
   	static int pwm_value = 0;
 
   	if(ramp_up){
-    	pwm_value++;
-    	if(pwm_value >= 255){
+    		pwm_value++;
+    		if(pwm_value >= 255){
 			ramp_up = false;
 		}
 	}
