@@ -2,10 +2,7 @@
 #include "led.h"
 
 void LED_init() {
-	// ...
   DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3);
-  DDRD |= (1 << DDD6);
-
 }
 
 void toggle_LED(enum COLORS color){

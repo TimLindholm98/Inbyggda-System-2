@@ -10,44 +10,20 @@
 #include "serial.h"
 #include "timer.h"
 
-static volatile int pwm_value = 0;
-static volatile bool ramp_up = true;
+static volatile int indexing = 0;
 
 void main(void){
 	timer_init();
 	LED_init();
-	//sei();
+
 	while(1){
-		if(ramp_up){
-			pwm_value++;
-			if(pwm_value == 255){
-				ramp_up = false;
-			}
+		if(TIFR0 & (1<<OCF0A)){
+			indexing++;
+	    TIFR0 |= ~(1 << OCF0A);
 		}
-		else{
-			pwm_value--;
-      if(pwm_value <= 0){
-				ramp_up = true;
-			}
-		}
-		_delay_ms(10);
-		OCR0A = pwm_value;
-	}
-}
-
-
-ISR(TIMER0_COMPA_vect){			//Ramping LED uncomment sei(); for interrupts
-	if(ramp_up){
-		pwm_value++;
-		if(pwm_value >= 255){
-			ramp_up = false;
+		if(indexing == 10){
+			toggle_LED(MAGENTA);
+			indexing = 0;
 		}
 	}
-	else{
-		pwm_value--;
-		if(pwm_value <= 0){
-			ramp_up = true;
-		}
-	}
-	OCR0A = pwm_value;
 }
